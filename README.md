@@ -1,3 +1,38 @@
+# About
+
+This is an example showing how to load data from the server once during initial load and then make it available using context. See `pages/_app.tsx` for details.
+
+We are building a multi tenant service where different tenants have different configuration including different feature flags, for example how the UI should look. We are also doing server side rendering and want the entire page to be rendered from the start. Next.js provides a few different options for doing server side rendering, but in our case we have separate backend services that we want the client to use once it is running in the browser, ie as a traditional single-page-app.
+
+We decided to use getInitialProps to load the tenant configuration on the server for all pages and then use a Context Provider to make this data available for any component. In our case the tenant is determined by the hostname.
+
+We are not using getServerSideProps because:
+
+- the data is the same for every page (ie we dont need to reload the data)
+- this would add additional delay for page navigation and would add additional load on our servers (1 additional request / page navigation) (could be mitigated using
+caching)
+
+Notice getInitialProps in `_app.tsx` is slightly different than a regular getInitialProps:
+
+```
+MyApp.getInitialProps = async (appContext: AppContext) => {
+  const { req } = appContext.ctx;
+  const isOnServer = !!req;
+  const appProps = await App.getInitialProps(appContext);
+  const tenant = isOnServer ? loadTenantDetails(req) : null;
+
+  return { ...appProps, tenant };
+}
+```
+
+Links:
+
+- https://nextjs.org/docs/api-reference/data-fetching/get-initial-props
+- https://nextjs.org/docs/advanced-features/custom-app
+- https://reactjs.org/docs/context.html
+
+===
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
