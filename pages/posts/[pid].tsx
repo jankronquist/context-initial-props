@@ -1,12 +1,16 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import { useContext } from 'react'
-import TenantContext from '../contexts/tenant'
-import styles from '../styles/Home.module.css'
+import TenantContext from '../../contexts/tenant'
+import styles from '../../styles/Home.module.css'
 
-const Home: NextPage = () => {
+const PostPage: NextPage = () => {
   const tenant = useContext(TenantContext);
+  const router = useRouter();
+  const { pid } = router.query
+
   return (
     <div className={styles.container}>
       <Head>
@@ -17,7 +21,7 @@ const Home: NextPage = () => {
 
       <main className={styles.main}>
         <h1 className={styles.title}>
-          Root page
+          Post: {pid}
         </h1>
         <p>tenant={tenant.name}</p>
         <ul>
@@ -30,4 +34,4 @@ const Home: NextPage = () => {
   )
 }
 
-export default Home
+export default PostPage
